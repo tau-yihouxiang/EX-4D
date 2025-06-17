@@ -2,9 +2,13 @@
 
 <div align="center">
 
+<img src="docs/Logo.png" alt="EX-4D Logo" width="250">
+
 [📄 Paper](https://arxiv.org/abs/2506.05554)  |  [🎥 Homepage](https://tau-yihouxiang.github.io/projects/EX-4D/EX-4D.html)  |  [💻 Code](https://github.com/tau-yihouxiang/EX-4D)
 
 </div>
+
+
 
 ## 🌟 Highlights
 
@@ -16,23 +20,16 @@
 
 ## 🎬 Demo Results
 
-<table>
-<tr>
-<td align="center"><b>Input Video</b></td>
-<td align="center"><b>Extreme Viewpoint Output</b></td>
-</tr>
-<tr>
-<td><img src="https://via.placeholder.com/300x200/2196F3/FFFFFF?text=Input+Monocular+Video" alt="Input"></td>
-<td><img src="https://via.placeholder.com/300x200/FF9800/FFFFFF?text=4D+Output+Video" alt="Output"></td>
-</tr>
-</table>
+<div align="center">
+<img src="docs/teaser.png" alt="EX-4D Demo Results" width="800">
+</div>
 
 *EX-4D transforms monocular videos into camera-controllable 4D experiences with physically consistent results under extreme viewpoints.*
 
 ## 🏗️ Framework Overview
 
 <div align="center">
-<img src="https://via.placeholder.com/700x400/9C27B0/FFFFFF?text=EX-4D+Architecture" alt="EX-4D Architecture">
+<img src="docs/overview.png" alt="EX-4D Architecture">
 </div>
 
 Our framework consists of three key components:
@@ -51,7 +48,7 @@ git clone https://github.com/username/EX-4D.git
 cd EX-4D
 
 # Create conda environment
-conda create -n ex4d python=3.8
+conda create -n ex4d python=3.10
 conda activate ex4d
 
 # Install dependencies
