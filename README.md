@@ -44,73 +44,33 @@ Our framework consists of three key components:
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/EX-4D.git
+git clone https://github.com/tau-yihouxiang/EX-4D.git
 cd EX-4D
 
 # Create conda environment
 conda create -n ex4d python=3.10
 conda activate ex4d
-
-# Install dependencies
-pip install -r requirements.txt
+# Install PyTorch (2.x recommended)
+pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu124
+# Install Nvdiffrast
+pip install git+https://github.com/NVlabs/nvdiffrast.git
+# Install dependencies and diffsynth
+pip install -e .
 ```
 
-### Dependencies
-
+### Download Pretrained Model
 ```bash
-pip install torch torchvision
-pip install opencv-python
-pip install nvdiffrast
-pip install transformers
-pip install diffusers
-pip install accelerate
+huggingface-cli download Wan-AI/Wan2.1-I2V-14B-480P --local-dir ./models/Wan-AI
+huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 ```
 
-### Basic Usage
-
-```python
-import torch
-from ex4d import EX4DModel
-
-# Load pre-trained model
-model = EX4DModel.from_pretrained("ex4d-base")
-
-# Load input video
-input_video = "path/to/your/video.mp4"
-
-# Define camera trajectory (example: rotation from -90° to 90°)
-camera_trajectory = generate_camera_trajectory(
-    start_angle=-90, 
-    end_angle=90, 
-    num_frames=49
-)
-
-# Generate 4D video
-output_video = model.generate(
-    input_video=input_video,
-    camera_trajectory=camera_trajectory,
-    output_resolution=(512, 512)
-)
-
-# Save result
-save_video(output_video, "output_4d_video.mp4")
+### Example Usage
+```
+python infer.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video outputs/flower.mp4
 ```
 
-### Training
-
-```bash
-# Download training dataset (OpenVID-1M)
-python scripts/download_data.py --dataset openvid
-
-# Start training
-python train.py \
-    --config configs/ex4d_base.yaml \
-    --data_path data/openvid \
-    --output_dir outputs/ex4d_training \
-    --batch_size 4 \
-    --learning_rate 3e-5 \
-    --num_gpus 8
-```
+### DW-Mesh Construction
+Comming Soon!
 
 ## 📊 Performance
 
@@ -129,74 +89,6 @@ python train.py \
 - Superior performance in physical consistency and extreme viewpoint quality
 - Significant improvement as camera angles become more extreme
 
-## 🔧 Technical Details
-
-### Depth Watertight Mesh Construction
-
-```python
-def construct_dw_mesh(depth_map, image):
-    """
-    Construct Depth Watertight Mesh from depth map and image
-    
-    Args:
-        depth_map: Per-frame depth estimation [H, W]
-        image: RGB image [H, W, 3]
-    
-    Returns:
-        mesh: DW-Mesh {V, F, T, O}
-    """
-    # Unproject pixels to 3D vertices
-    vertices = unproject_depth_to_3d(depth_map)
-    
-    # Create triangular faces
-    faces = create_triangular_faces(vertices)
-    
-    # Detect occlusions and assign textures
-    occlusions = detect_occlusions(faces, depth_map)
-    textures = assign_textures(image, occlusions)
-    
-    return DWMesh(vertices, faces, textures, occlusions)
-```
-
-### LoRA Adapter Integration
-
-```python
-def add_lora_to_model(model, lora_rank=16, target_modules="q,k,v,o,ffn.0,ffn.2"):
-    """
-    Add LoRA adaptation to video diffusion model
-    
-    Args:
-        model: Pre-trained video diffusion model
-        lora_rank: Rank for low-rank adaptation
-        target_modules: Target layers for LoRA injection
-    """
-    lora_config = LoraConfig(
-        r=lora_rank,
-        lora_alpha=16,
-        target_modules=target_modules.split(","),
-        init_lora_weights=True
-    )
-    return inject_adapter_in_model(lora_config, model)
-```
-
-## 📁 Project Structure
-
-```
-EX-4D/
-├── configs/                 # Configuration files
-│   ├── ex4d_base.yaml
-│   └── ex4d_large.yaml
-├── ex4d/                   # Main package
-│   ├── models/             # Model implementations
-│   │   ├── dw_mesh.py     # Depth Watertight Mesh
-│   │   ├── adapter.py     # LoRA adapter
-│   │   └── diffusion.py   # Video diffusion integration
-│   ├── data/              # Data processing
-│   └── utils/             # Utility functions
-├── scripts/               # Training and evaluation scripts
-├── requirements.txt       # Dependencies
-└── README.md             # This file
-```
 
 ## 🎯 Applications
 
@@ -220,17 +112,13 @@ EX-4D/
 ## ⚠️ Limitations
 
 - **Depth Dependency**: Performance relies on monocular depth estimation quality
-- **Fine Details**: May struggle with very thin structures or fine geometric details
 - **Computational Cost**: Requires significant computation for high-resolution videos
 - **Reflective Surfaces**: Challenges with reflective or transparent materials
 
 ## 🔮 Future Work
-
-- [ ] Multi-frame depth consistency enforcement
-- [ ] Uncertainty-aware mesh construction
-- [ ] Neural mesh refinement techniques
-- [ ] Real-time inference optimization
+- [ ] Real-time inference optimization (3DGS / 4DGS)
 - [ ] Support for higher resolutions (1K, 2K)
+- [ ] Neural mesh refinement techniques
 
 ## 📚 Citation
 

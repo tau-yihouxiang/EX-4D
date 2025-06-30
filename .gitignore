@@ -1,0 +1,8 @@
+examples/wanvideo/models
+*__pycache__/
+*.egg-info*
+logs/
+models/Wan-AI*
+models/lightning_logs*
+outputs
+models

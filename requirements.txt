@@ -1,0 +1,12 @@
+transformers==4.51.3
+trimesh==3.23.5
+controlnet_aux
+imageio
+imageio[ffmpeg]
+safetensors
+einops
+sentencepiece
+protobuf
+modelscope
+ftfy
+peft
