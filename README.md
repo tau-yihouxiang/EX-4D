@@ -56,6 +56,8 @@ pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https
 pip install git+https://github.com/NVlabs/nvdiffrast.git
 # Install dependencies and diffsynth
 pip install -e .
+# Install depthcrafter for depth estimation. (Follow VDA's installing instruction for checkpoints preparation.)
+git clone https://github.com/Tencent/DepthCrafter.git
 ```
 
 ### Download Pretrained Model
@@ -66,7 +68,12 @@ huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 
 ### Example Usage
 #### DW-Mesh Construction
-Comming Soon!
+
+first change the path to local model weights in recon.py.
+
+```
+python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180) --output_dir outputs/flower 
+```
 
 #### EX-4D Generation
 ```
