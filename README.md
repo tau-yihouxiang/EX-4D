@@ -74,25 +74,16 @@ python infer.py --color_video examples/flower/render_180.mp4 --mask_video exampl
 ```
 
 ### Example Results
-
 <table>
 <tr>
-<td align="center">
-<video width="100%" controls>
-<source src="examples/flower/input.mp4" type="video/mp4">
-</video>
-<br>
-<em>Input Video</em>
+<td align="center" width="50%">
+<b>Input Video</b><br>
+<video src="examples/flower/input.mp4" controls width="100%"></video>
 </td>
-<td align="center" style="font-size: 2em; color: #4A90E2;">
-→
-</td>
-<td align="center">
-<video width="100%" controls>
-<source src="examples/flower/output.mp4" type="video/mp4">
-</video>
-<br>
-<em>Output Video</em>
+<td>→</td>
+<td align="center" width="50%">
+<b>Output Extreme-view Video</b><br>
+<video src="examples/flower/output.mp4" controls width="100%"></video>
 </td>
 </tr>
 </table>
