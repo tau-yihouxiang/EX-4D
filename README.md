@@ -73,25 +73,23 @@ Comming Soon!
 python infer.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video outputs/flower.mp4
 ```
 
-<div style="display: flex; align-items: center; gap: 10px;">
-  <div style="flex: 1; text-align: center;">
-    <img src="examples/flower/input.gif" width="100%" style="border: none;">
-    <div style="margin-top: 8px; font-weight: bold;">
-      Input Video
-    </div>
-  </div>
-     
-  <div style="font-size: 2em; color: #4A90E2; padding: 0 0px;">
+<table style="border: none;">
+<tr>
+<td width="45%" align="center" style="border: none;">
+<img src="examples/flower/input.gif" width="100%" style="border: none;">
+<br><b>Input Video</b>
+</td>
+<td>
+ <div style="font-size: 2em; color: #4A90E2;">
     →
   </div>
-     
-  <div style="flex: 1; text-align: center;">
-    <img src="examples/flower/output.gif" width="100%" style="border: none;">
-    <div style="margin-top: 8px; font-weight: bold;">
-      Output Video
-    </div>
-  </div>
-</div>
+</td>
+<td width="45%" align="center" style="border: none;">
+<img src="examples/flower/output.gif" width="100%" style="border: none;">
+<br><b>Output Video</b>
+</td>
+</tr>
+</table>
 
 <!-- ## 📊 Performance
 
