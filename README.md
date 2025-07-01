@@ -72,7 +72,7 @@ python infer.py --color_video examples/flower/render_180.mp4 --mask_video exampl
 ### DW-Mesh Construction
 Comming Soon!
 
-## 📊 Performance
+<!-- ## 📊 Performance
 
 ### Quantitative Results
 
@@ -81,7 +81,7 @@ Comming Soon!
 | ReCamMaster | 64.68 | 943.45 | 0.434 |
 | TrajectoryCrafter | 65.33 | 893.80 | 0.447 |
 | TrajectoryAttention | 62.49 | 912.14 | 0.389 |
-| **EX-4D (Ours)** | **55.42** | **823.61** | **0.450** |
+| **EX-4D (Ours)** | **55.42** | **823.61** | **0.450** | -->
 
 ### User Study Results
 
