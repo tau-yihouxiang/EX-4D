@@ -71,7 +71,7 @@ huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 ```bash
 python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180) --output_dir examples/flower
 ```
-#### 2. EX-4D Generation
+#### 2. EX-4D Generation (48GB VRAM required)
 ```bash
 python generate.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video examples/output.mp4
 ```
