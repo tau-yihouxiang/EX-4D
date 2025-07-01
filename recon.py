@@ -308,8 +308,8 @@ if __name__ == "__main__":
 
     device = "cuda:0"
     depth_estimater = DepthCrafterDemo(
-        unet_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/DepthCrafter",
-        pre_train_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/stable-video-diffusion-img2vid",
+        unet_path="tencent/DepthCrafter",
+        pre_train_path="stabilityai/stable-video-diffusion-img2vid",
         cpu_offload=None,
         device=device
     )

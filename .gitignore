@@ -6,5 +6,5 @@ models/Wan-AI*
 models/lightning_logs*
 outputs
 models
-Video-Depth-Anything/
-DepthCrafter/
+Video-Depth-Anything
+DepthCrafter
