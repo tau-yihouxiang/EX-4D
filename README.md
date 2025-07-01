@@ -98,16 +98,16 @@ Comming Soon!
 - **📱 Social Media**: Generate dynamic camera movements for content creation
 - **🏢 Architecture**: Visualize spaces from multiple viewpoints
 
-## 📈 Benchmarks
+<!-- ## 📈 Benchmarks -->
 
-### Viewpoint Range Evaluation
+<!-- ### Viewpoint Range Evaluation
 
 | Range | Small (0°→30°) | Large (0°→60°) | Extreme (0°→90°) | Full (-90°→90°) |
 |-------|----------------|----------------|------------------|-----------------|
 | FID Score | 44.19 | 50.30 | 55.42 | - |
-| Performance Gap | +9.1% better | +8.9% better | +11.3% better | +15.5% better |
+| Performance Gap | +9.1% better | +8.9% better | +11.3% better | +15.5% better | -->
 
-*Performance gap compared to the second-best method in each category.*
+<!-- *Performance gap compared to the second-best method in each category.* -->
 
 ## ⚠️ Limitations
 
