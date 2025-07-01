@@ -86,7 +86,7 @@ python infer.py --color_video examples/flower/render_180.mp4 --mask_video exampl
 </td>
 <td width="45%" align="center">
 <img src="examples/flower/output.gif" width="100%">
-<br><b>Output Extreme-view Video</b>
+<br><b>Output Video</b>
 </td>
 </tr>
 </table>
