@@ -80,29 +80,23 @@ python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180) --
 python infer.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video outputs/flower.mp4
 ```
 
-<div style="display: flex; align-items: center; gap: 10px;">
-  <div style="flex: 1;">
-    <video width="100%" controls>
-      <source src="examples/flower/input.mp4" type="video/mp4">
-    </video>
-    <div style="text-align: center; margin-top: 8px; font-size: 0.9em; color: #666;">
-      Input Video
-    </div>
-  </div>
-     
-  <div style="font-size: 2em; color: #4A90E2; padding: 0 0px;">
-    →
-  </div>
-     
-  <div style="flex: 1;">
-    <video width="100%" controls>
-      <source src="examples/flower/output.mp4" type="video/mp4">
-    </video>
-    <div style="text-align: center; margin-top: 8px; font-size: 0.9em; color: #666;">
-      Output Video
-    </div>
-  </div>
+<table>
+<tr>
+<td width="45%" align="center">
+<img src="examples/flower/input.gif" width="100%">
+<br><b>Input Video</b>
+</td>
+<td align="center">
+<div style="font-size: 2em; color: #4A90E2; padding: 0 0px;">
+  ➜
 </div>
+</td>
+<td width="45%" align="center">
+<img src="examples/flower/output.gif" width="100%">
+<br><b>Output Video</b>
+</td>
+</tr> 
+</table>
 
 <!-- ## 📊 Performance
 
