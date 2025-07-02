@@ -67,17 +67,13 @@ huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 ```
 
 ### Example Usage
-#### DW-Mesh Construction
-
-first change the path to local model weights in recon.py.
-
-```
+#### 1. DW-Mesh Reconstruction
+```bash
 python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180/180_outer) --output_dir examples/flower
 ```
-
-#### EX-4D Generation
-```
-python infer.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video outputs/flower.mp4
+#### 2. EX-4D Generation (48GB VRAM required)
+```bash
+python generate.py --color_video examples/flower/render_180.mp4 --mask_video examples/flower/mask_180.mp4 --output_video examples/output.mp4
 ```
 
 <table>
