@@ -1,10 +1,10 @@
-examples/wanvideo/models
+examples/wanvideo
 *__pycache__/
 *.egg-info*
 logs/
-models/Wan-AI*
-models/lightning_logs*
+/models/Wan-AI*
+/models/lightning_logs*
 outputs
-models
+/models/
 Video-Depth-Anything
 DepthCrafter
