@@ -72,7 +72,7 @@ huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 first change the path to local model weights in recon.py.
 
 ```
-python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180) --output_dir examples/flower
+python recon.py --input_video examples/flower/input.mp4 --cam 30 (/60/90/180/180_outer) --output_dir examples/flower
 ```
 
 #### EX-4D Generation

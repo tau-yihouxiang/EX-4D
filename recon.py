@@ -135,6 +135,15 @@ def random_camera_traj(n_frames, depth_src, random_type, args, scene_name, depth
 
         centers = np.zeros((args.num_frames, 3))
         centers[:, 2] = radius
+    elif random_type == "180_outer":
+        radius = depth_min
+        eyes = np.zeros((args.num_frames, 3))
+        angle = np.linspace(0, 2 * (rounds) * np.pi, args.num_frames)
+        eyes[:, 0] = np.sin(angle) * radius
+        eyes[:, 1] = (np.cos(angle) - 1) * radius * 0.2
+        eyes[:, 2] = radius - radius * np.abs(np.cos(angle))
+        centers = np.zeros((args.num_frames, 3))
+        centers[:, -1] = radius
     else:
         ta = int(random_type)
         angle = np.linspace(0, (ta / 180 * np.pi) * rounds, args.num_frames)
@@ -157,6 +166,14 @@ def generate_faces(H, W, C, idx, device, left_padding=0, right_padding=0, top_pa
             np.stack([idx[:-1, 1:].ravel(), idx[1:, :-1].ravel(), idx[1:, 1:].ravel()], axis=-1)
         ], axis=0)).int().to(device)
     faces = faces[:,[1,0,2]]
+    faces = torch.cat(
+        [
+            faces,
+            torch.tensor([[W - 1, 0, H * W - 1]]).int().to(device),
+            torch.tensor([[H * W - 1, 0, (H - 1) * W]]).int().to(device),
+        ],
+        0
+    )
     return faces
 
 def run_depth(frames, video_depth_anything, args, target_fps, DEVICE):
@@ -307,9 +324,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     device = "cuda:0"
+    # depth_estimater = DepthCrafterDemo(
+    #     unet_path="tencent/DepthCrafter",
+    #     pre_train_path="stabilityai/stable-video-diffusion-img2vid",
+    #     cpu_offload=None,
+    #     device=device
+    # )
     depth_estimater = DepthCrafterDemo(
-        unet_path="tencent/DepthCrafter",
-        pre_train_path="stabilityai/stable-video-diffusion-img2vid",
+        unet_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/DepthCrafter",
+        pre_train_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/stable-video-diffusion-img2vid",
         cpu_offload=None,
         device=device
     )
