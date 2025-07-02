@@ -142,6 +142,10 @@ python generate.py --color_video examples/flower/render_180.mp4 --mask_video exa
 - [ ] Support for higher resolutions (1K, 2K)
 - [ ] Neural mesh refinement techniques
 
+## 🙏 Acknowledgments
+
+We would like to thank the [DiffSynth-Studio v1.1.1](https://github.com/modelscope/DiffSynth-Studio/tree/v1.1.1) project for providing the foundational diffusion framework.
+
 ## 📚 Citation
 
 If you find our work useful, please consider citing:
