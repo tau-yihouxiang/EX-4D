@@ -135,15 +135,6 @@ def random_camera_traj(n_frames, depth_src, random_type, args, scene_name, depth
 
         centers = np.zeros((args.num_frames, 3))
         centers[:, 2] = radius
-    elif random_type == "180_outer":
-        radius = depth_min
-        eyes = np.zeros((args.num_frames, 3))
-        angle = np.linspace(0, 2 * (rounds) * np.pi, args.num_frames)
-        eyes[:, 0] = np.sin(angle) * radius
-        eyes[:, 1] = (np.cos(angle) - 1) * radius * 0.2
-        eyes[:, 2] = radius - radius * np.abs(np.cos(angle))
-        centers = np.zeros((args.num_frames, 3))
-        centers[:, -1] = radius
     else:
         ta = int(random_type)
         angle = np.linspace(0, (ta / 180 * np.pi) * rounds, args.num_frames)
