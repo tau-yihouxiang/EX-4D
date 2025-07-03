@@ -123,9 +123,9 @@ def get_camera_pose(eye, center):
     view[3, 3] = 1.0
     return torch.from_numpy(view)
 
-def random_camera_traj(n_frames, depth_src, random_type, args, scene_name, depth_min=None, compare=True, fixed_frame=49, random_iter=0):
+def random_camera_traj(n_frames, depth_src, random_type, args, depth_min=None, compare=True, fixed_frame=49, random_iter=0):
     rounds = (fixed_frame / args.num_frames) if fixed_frame > args.num_frames else args.num_frames / fixed_frame
-    np.random.seed((hash(scene_name) + random_iter) % (2^32-1))
+    # np.random.seed((hash(scene_name) + random_iter) % (2^32-1))
     if random_type == "180":
         radius = depth_min
         eyes = np.zeros((args.num_frames, 3))
@@ -205,17 +205,11 @@ def run_render(video_path, output_dir, args, models):
     if frames.shape[0] < args.num_frames:
         print(f"Video {video_path} has less than {args.num_frames} frames, skipping")
         return
-    scene_name = os.path.basename(video_path).split(".")[0]
 
     glctx = dr.RasterizeCudaContext(device=device)
     n_frames = min(args.num_frames, frames.shape[0])
     frames = frames[:n_frames]
 
-    # 1.1 save gt
-    if args.save_gt:
-        os.makedirs(os.path.join(output_dir, scene_name), exist_ok=True)
-        imwrite(os.path.join(output_dir, scene_name, "gt.mp4"), frames.astype(np.uint8), fps=30)
-    
     depth_src, intrinsics = run_depth_crafter(frames.astype(np.float32) / 255., models)
     frames = torch.from_numpy(frames).float().to(device)
 
@@ -225,17 +219,12 @@ def run_render(video_path, output_dir, args, models):
     with torch.no_grad():
         old_depth_src = depth_src
         depth_src = depth_src.clone()
-        if args.debug == 0:
-            if len(depth_src.shape) == 3:
-                depth_src[:, 0, :] = 100
-                depth_src[:, -1, :] = 100
-                depth_src[:, 1:-1, 0] = 100
-                depth_src[:, 1:-1, -1] = 100
-            else:
-                depth_src[:,:, 0, :] = 100
-                depth_src[:,:, -1, :] = 100
-                depth_src[:,:, 1:-1, 0] = 100
-                depth_src[:,:, 1:-1, -1] = 100
+
+        depth_src[:, :, 0, :] = 100
+        depth_src[:, :, -1, :] = 100
+        depth_src[:, :, :, 0] = 100
+        depth_src[:, :, :, -1] = 100
+
         depth_src = depth_src.unsqueeze(-1)
         rgbs_src = frames
 
@@ -254,7 +243,7 @@ def run_render(video_path, output_dir, args, models):
         # random camera traj & rendering
         depth_min = depth_src[0].min().item() + 0.15
         camera_poses = random_camera_traj(n_frames=n_frames, depth_src=depth_src, random_type=args.cam,
-            args=args, scene_name=scene_name, depth_min=depth_min)
+            args=args, depth_min=depth_min)
         video = []
         random_type = args.cam
         for idx, poses in enumerate(tqdm(camera_poses)):
@@ -263,12 +252,12 @@ def run_render(video_path, output_dir, args, models):
                 pts_xyz = depth_src[idx] * rd_src + ro_src  # (H, W, 3)
                 faces = generate_faces(H, W, C, fidx, device)
                 vertices, new_faces, colors, _ = point_to_mesh_cuda(pts_xyz, pts_color, faces, old_depth_src[idx], render_type=args.cam, filter_type=args.filter_type)
-                if idx == 0 and (args.debug or args.save_mesh):
+                if idx == 0 and args.save_mesh:
                     mesh = trimesh.Trimesh(vertices.cpu().numpy(), new_faces.cpu().numpy())
                     # Convert RGBA colors to RGBA uint8 format that trimesh expects
                     vertex_colors = colors.cpu().numpy().astype(np.uint8)[:, :3]
                     mesh.visual.vertex_colors = vertex_colors
-                    mesh_path = os.path.join(output_dir, scene_name, "mesh.ply")
+                    mesh_path = os.path.join(output_dir, "DW-Mesh.ply")
                     mesh.export(mesh_path)
             img = render_nvdiffrast(glctx, vertices, new_faces, colors, proj, poses, fov_x, fov_y, H, W)[0]
             if idx == 0:
@@ -283,18 +272,18 @@ def run_render(video_path, output_dir, args, models):
             video.append(img.cpu().numpy().astype(np.uint8))
         
         # output_dir = args.output_dir
-        os.makedirs(os.path.join(output_dir, scene_name), exist_ok=True)
+        os.makedirs(os.path.join(output_dir), exist_ok=True)
 
-        cond_path = os.path.join(output_dir, scene_name, f"render_{random_type}.mp4")
+        cond_path = os.path.join(output_dir, f"color_{random_type}.mp4")
         video = np.stack(video, axis=0).astype(np.uint8)
         # save to video via imageio.v3
         imwrite(cond_path, video[..., :3], fps=30)
 
-        mask_path = os.path.join(output_dir, scene_name, f"mask_{random_type}.mp4")
+        mask_path = os.path.join(output_dir, f"mask_{random_type}.mp4")
         imwrite(mask_path, video[..., 3:], fps=30)
         if args.save_camera:
             # camera_poses = torch.stack(camera_poses, 0)
-            output_video_path = os.path.join(output_dir, scene_name, f"camera_{random_type}.npz")
+            output_video_path = os.path.join(output_dir, f"camera_{random_type}.npz")
             np.savez_compressed(output_video_path, extrinsics=camera_poses.cpu().numpy(), intrinsics=K.cpu().numpy())
 
 if __name__ == "__main__":
@@ -302,13 +291,11 @@ if __name__ == "__main__":
     parser.add_argument('--input_video', type=str, default="testset/origin_data/openvid")
     parser.add_argument('--num_frames',type=int,default=49)
     parser.add_argument('--output_dir', type=str, default="testset/processed/openvid")
-    parser.add_argument('--debug',type=int,default=0)
     parser.add_argument('--only_first_frame',type=int,default=0)
     parser.add_argument('--save_depth',type=int,default=1)
     parser.add_argument('--cam',type=str,default="180")
-    parser.add_argument('--save_camera',type=int,default=1)
-    parser.add_argument('--save_mesh',type=int,default=0)
-    parser.add_argument('--save_gt',type=int,default=0)
+    parser.add_argument('--save_camera', action='store_true')
+    parser.add_argument('--save_mesh', action='store_true')
     parser.add_argument('--filter_type',type=str,default="angle")
     parser.add_argument('--use_dwmesh',type=int,default=1)
     parser.add_argument('--input_size', type=int, default=518)

@@ -12,3 +12,4 @@ ftfy
 peft
 tqdm
 diffusers
+matplotlib
