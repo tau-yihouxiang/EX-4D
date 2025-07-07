@@ -26,8 +26,7 @@ sys.path.append("DepthCrafter")
 
 from utils.depth_utils import DepthCrafterDemo
 
-def point_to_mesh_cuda(pts, rgbs, faces, old_depth_src, min_angle_deg=2.5, target_normal=None, min_cos_sim=0.5, render_type="left",
-    filter_type="angle"):
+def point_to_mesh_cuda(pts, rgbs, faces, min_angle_deg=2.5):
     h, w = rgbs.shape[:2]
     vertices = pts.reshape(-1, 3)
     # colors = rgbs.reshape(-1, 3)
@@ -39,48 +38,35 @@ def point_to_mesh_cuda(pts, rgbs, faces, old_depth_src, min_angle_deg=2.5, targe
     v2 = vertices[faces[:, 2]]
     face_normals = torch.cross(v1 - v0, v2 - v0)
     face_normals = F.normalize(face_normals, dim=1)
-    if filter_type == "angle":
-        # print(v0.shape, v1.shape, v2.shape)
-        def angle_between(v1, v2):
-            cos_theta = torch.sum(v1 * v2, -1) / (
-                torch.norm(v1, dim=1) * torch.norm(v2, dim=1) + 1e-12
-            )
-            return torch.arccos(torch.clip(cos_theta, -1.0, 1.0)) * 180 / np.pi
+    def angle_between(v1, v2):
+        cos_theta = torch.sum(v1 * v2, -1) / (
+            torch.norm(v1, dim=1) * torch.norm(v2, dim=1) + 1e-12
+        )
+        return torch.arccos(torch.clip(cos_theta, -1.0, 1.0)) * 180 / np.pi
 
-        a = angle_between(v1 - v0, v2 - v0)
-        b = angle_between(v2 - v1, v0 - v1)
-        c = angle_between(v0 - v2, v1 - v2)
-        min_angles = torch.minimum(torch.minimum(a, b), c)
+    a = angle_between(v1 - v0, v2 - v0)
+    b = angle_between(v2 - v1, v0 - v1)
+    c = angle_between(v0 - v2, v1 - v2)
+    min_angles = torch.minimum(torch.minimum(a, b), c)
 
-        # Filter faces based on minimum angle
-        valid_faces = min_angles >= min_angle_deg
-        z_range = vertices[:, 2].max() - vertices[:, 2].min()
+    # Filter faces based on minimum angle
+    valid_faces = min_angles >= min_angle_deg
+    z_range = vertices[:, 2].max() - vertices[:, 2].min()
 
-        z01, z12, z20 = torch.abs((v0 - v1)[:, 2]), torch.abs((v1 - v2)[:, 2]), torch.abs((v2 - v0)[:, 2])
-        y01, y12, y20 = torch.abs((v0 - v1)[:, 1]), torch.abs((v1 - v2)[:, 1]), torch.abs((v2 - v0)[:, 1])
-        x01, x12, x20 = torch.abs((v0 - v1)[:, 0]), torch.abs((v1 - v2)[:, 0]), torch.abs((v2 - v0)[:, 0])
-        z_max = torch.maximum(torch.maximum(z01, z12), z20)
-        y_max = torch.maximum(torch.maximum(y01, y12), y20)
-        x_max = torch.maximum(torch.maximum(x01, x12), x20)
-        proj_max = torch.maximum(torch.maximum(x_max, y_max), z_max)
-        valid_faces2 = (proj_max / z_range < 0.013)
-        valid_faces_final = valid_faces & valid_faces2
-        if args.use_dwmesh:
-            invalid_faces = faces[~valid_faces]
-            colors.index_put_((invalid_faces,), torch.zeros(4).to(colors.device))
-        else:
-            faces = faces[valid_faces]
-    elif filter_type == "boundary":
-        z01, z12, z20 = torch.abs((v0 - v1)[:, 2]), torch.abs((v1 - v2)[:, 2]), torch.abs((v2 - v0)[:, 2])
-        y01, y12, y20 = torch.abs((v0 - v1)[:, 1]), torch.abs((v1 - v2)[:, 1]), torch.abs((v2 - v0)[:, 1])
-        x01, x12, x20 = torch.abs((v0 - v1)[:, 0]), torch.abs((v1 - v2)[:, 0]), torch.abs((v2 - v0)[:, 0])
-        z_max = torch.maximum(torch.maximum(z01, z12), z20)
-        y_max = torch.maximum(torch.maximum(y01, y12), y20)
-        x_max = torch.maximum(torch.maximum(x01, x12), x20)
-        threshold = torch.maximum(x_max, y_max)
-        invalid = z_max / (threshold + 1e-8) > 2
-        invalid_faces = faces[invalid]
+    z01, z12, z20 = torch.abs((v0 - v1)[:, 2]), torch.abs((v1 - v2)[:, 2]), torch.abs((v2 - v0)[:, 2])
+    y01, y12, y20 = torch.abs((v0 - v1)[:, 1]), torch.abs((v1 - v2)[:, 1]), torch.abs((v2 - v0)[:, 1])
+    x01, x12, x20 = torch.abs((v0 - v1)[:, 0]), torch.abs((v1 - v2)[:, 0]), torch.abs((v2 - v0)[:, 0])
+    z_max = torch.maximum(torch.maximum(z01, z12), z20)
+    y_max = torch.maximum(torch.maximum(y01, y12), y20)
+    x_max = torch.maximum(torch.maximum(x01, x12), x20)
+    proj_max = torch.maximum(torch.maximum(x_max, y_max), z_max)
+    valid_faces2 = (proj_max / z_range < 0.013)
+    valid_faces_final = valid_faces & valid_faces2
+    if args.use_dwmesh:
+        invalid_faces = faces[~valid_faces]
         colors.index_put_((invalid_faces,), torch.zeros(4).to(colors.device))
+    else:
+        faces = faces[valid_faces]
     return vertices, faces, colors, None
 
 
@@ -247,11 +233,11 @@ def run_render(video_path, output_dir, args, models):
         video = []
         random_type = args.cam
         for idx, poses in enumerate(tqdm(camera_poses)):
-            if args.only_first_frame == 0 or idx == 0:
+            if idx == 0:
                 pts_color = rgbs_src[idx]                    
                 pts_xyz = depth_src[idx] * rd_src + ro_src  # (H, W, 3)
                 faces = generate_faces(H, W, C, fidx, device)
-                vertices, new_faces, colors, _ = point_to_mesh_cuda(pts_xyz, pts_color, faces, old_depth_src[idx], render_type=args.cam, filter_type=args.filter_type)
+                vertices, new_faces, colors, _ = point_to_mesh_cuda(pts_xyz, pts_color, faces)
                 if idx == 0 and args.save_mesh:
                     mesh = trimesh.Trimesh(vertices.cpu().numpy(), new_faces.cpu().numpy())
                     # Convert RGBA colors to RGBA uint8 format that trimesh expects
@@ -287,30 +273,22 @@ def run_render(video_path, output_dir, args, models):
             np.savez_compressed(output_video_path, extrinsics=camera_poses.cpu().numpy(), intrinsics=K.cpu().numpy())
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Video Depth Anything')
-    parser.add_argument('--input_video', type=str, default="testset/origin_data/openvid")
+    parser = argparse.ArgumentParser(description='Recon Example')
+    parser.add_argument('--input_video', type=str, default="examples/flower/input.mp4")
     parser.add_argument('--num_frames',type=int,default=49)
-    parser.add_argument('--output_dir', type=str, default="testset/processed/openvid")
-    parser.add_argument('--only_first_frame',type=int,default=0)
+    parser.add_argument('--output_dir', type=str, default="outputs")
     parser.add_argument('--save_depth',type=int,default=1)
     parser.add_argument('--cam',type=str,default="180")
     parser.add_argument('--save_camera', action='store_true')
     parser.add_argument('--save_mesh', action='store_true')
-    parser.add_argument('--filter_type',type=str,default="angle")
     parser.add_argument('--use_dwmesh',type=int,default=1)
     parser.add_argument('--input_size', type=int, default=518)
     args = parser.parse_args()
 
     device = "cuda:0"
-    # depth_estimater = DepthCrafterDemo(
-    #     unet_path="tencent/DepthCrafter",
-    #     pre_train_path="stabilityai/stable-video-diffusion-img2vid",
-    #     cpu_offload=None,
-    #     device=device
-    # )
     depth_estimater = DepthCrafterDemo(
-        unet_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/DepthCrafter",
-        pre_train_path="/mnt/bn/pico-mr-hl-taohu/Data/codes/checkpoints/stable-video-diffusion-img2vid",
+        unet_path="tencent/DepthCrafter",
+        pre_train_path="stabilityai/stable-video-diffusion-img2vid",
         cpu_offload=None,
         device=device
     )
