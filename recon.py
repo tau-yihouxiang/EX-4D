@@ -121,6 +121,22 @@ def random_camera_traj(n_frames, depth_src, random_type, args, depth_min=None, c
 
         centers = np.zeros((args.num_frames, 3))
         centers[:, 2] = radius
+    elif random_type == "zoom_in":
+        radius = depth_min
+        eyes = np.zeros((args.num_frames, 3))
+        angle = np.linspace(0, radius - 0.01, args.num_frames)
+        eyes[:, 2] = angle
+
+        centers = np.zeros((args.num_frames, 3))
+        centers[:, 2] = radius
+    elif random_type == "zoom_out":
+        radius = depth_min
+        eyes = np.zeros((args.num_frames, 3))
+        angle = np.linspace(0, radius, args.num_frames)
+        eyes[:, 2] = -angle
+
+        centers = np.zeros((args.num_frames, 3))
+        centers[:, 2] = radius
     else:
         ta = int(random_type)
         angle = np.linspace(0, (ta / 180 * np.pi) * rounds, args.num_frames)
@@ -233,18 +249,17 @@ def run_render(video_path, output_dir, args, models):
         video = []
         random_type = args.cam
         for idx, poses in enumerate(tqdm(camera_poses)):
-            if idx == 0:
-                pts_color = rgbs_src[idx]                    
-                pts_xyz = depth_src[idx] * rd_src + ro_src  # (H, W, 3)
-                faces = generate_faces(H, W, C, fidx, device)
-                vertices, new_faces, colors, _ = point_to_mesh_cuda(pts_xyz, pts_color, faces)
-                if idx == 0 and args.save_mesh:
-                    mesh = trimesh.Trimesh(vertices.cpu().numpy(), new_faces.cpu().numpy())
-                    # Convert RGBA colors to RGBA uint8 format that trimesh expects
-                    vertex_colors = colors.cpu().numpy().astype(np.uint8)[:, :3]
-                    mesh.visual.vertex_colors = vertex_colors
-                    mesh_path = os.path.join(output_dir, "DW-Mesh.ply")
-                    mesh.export(mesh_path)
+            pts_color = rgbs_src[idx]                    
+            pts_xyz = depth_src[idx] * rd_src + ro_src  # (H, W, 3)
+            faces = generate_faces(H, W, C, fidx, device)
+            vertices, new_faces, colors, _ = point_to_mesh_cuda(pts_xyz, pts_color, faces)
+            if idx == 0 and args.save_mesh:
+                mesh = trimesh.Trimesh(vertices.cpu().numpy(), new_faces.cpu().numpy())
+                # Convert RGBA colors to RGBA uint8 format that trimesh expects
+                vertex_colors = colors.cpu().numpy().astype(np.uint8)[:, :3]
+                mesh.visual.vertex_colors = vertex_colors
+                mesh_path = os.path.join(output_dir, "DW-Mesh.ply")
+                mesh.export(mesh_path)
             img = render_nvdiffrast(glctx, vertices, new_faces, colors, proj, poses, fov_x, fov_y, H, W)[0]
             if idx == 0:
                 img[..., :3] = pts_color
@@ -292,5 +307,5 @@ if __name__ == "__main__":
         cpu_offload=None,
         device=device
     )
-
+    
     run_render(args.input_video, args.output_dir, args, depth_estimater)

@@ -69,7 +69,7 @@ huggingface-cli download yihouxiang/EX-4D --local-dir ./models/EX-4D
 ### Example Usage
 #### 1. DW-Mesh Reconstruction
 ```bash
-# --cam 180 (30 / 60 / 90)
+# --cam 180 (30 / 60 / 90 / zoom_in / zoom_out )
 python recon.py --input_video examples/flower/input.mp4 --cam 180 --output_dir outputs/flower --save_mesh
 ```
 #### 2. EX-4D Generation (48GB VRAM required)
