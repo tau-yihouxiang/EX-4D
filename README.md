@@ -1,3 +1,34 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="right">
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=en">English</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=zh-CN">简体中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=zh-TW">繁體中文</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=ja">日本語</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=ko">한국어</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=hi">हिन्दी</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=th">ไทย</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=fr">Français</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=de">Deutsch</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=es">Español</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=it">Itapano</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=ru">Русский</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=pt">Português</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=nl">Nederlands</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=pl">Polski</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=ar">العربية</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=fa">فارسی</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=tr">Türkçe</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=vi">Tiếng Việt</a></p>
+        <p><a href="https://openaitx.github.io/view.html?user=tau-yihouxiang&project=EX-4D&lang=id">Bahasa Indonesia</a></p>
+      </div>
+    </div>
+  </details>
+</div>
+
 # EX-4D: EXtreme Viewpoint 4D Video Synthesis via Depth Watertight Mesh
 
 <div align="center">
