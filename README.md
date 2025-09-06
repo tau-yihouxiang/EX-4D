@@ -154,11 +154,11 @@ If you find our work useful, please consider citing:
 ```bibtex
 @misc{hu2025ex4dextremeviewpoint4d,
       title={EX-4D: EXtreme Viewpoint 4D Video Synthesis via Depth Watertight Mesh}, 
-      author={Tao Hu and Haoyang Peng and Xiao Liu and Yuewen Ma},
+      author={Hu, Tao and Peng, Haoyang and Liu, Xiao and Ma, Yuewen},
       year={2025},
       eprint={2506.05554},
       archivePrefix={arXiv},
       primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2506.05554}, 
+      url={https://arxiv.org/abs/2506.05554}
 }
 ```
